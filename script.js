@@ -4,6 +4,7 @@ let userSets = [];
 let currentPracticeSession = null;
 let userProfile = null;
 
+
 async function loadSets() {
     try {
         const res = await fetch("default.json");
@@ -21,23 +22,23 @@ async function loadSets() {
             }
         ];
     }
-    const savedSets = window.savedUserSets;
-    if (savedSets) {
-        userSets = savedSets;
+    const saved = localStorage.getItem('userSets');
+    if (saved) {
+        userSets = JSON.parse(saved);
     }
 
-    const savedProfile = window.savedUserProfile;
+    const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) {
-        userProfile = savedProfile;
+        userProfile = JSON.parse(savedProfile);
     }
 
 }
 // new sets are saved to localstorage
 function saveUserSets() {
-    window.savedUserSets = [...userSets]; // ✅
+    localStorage.setItem('userSets', JSON.stringify(userSets));
 }
 function saveUserProfile() {
-    window.savedUserProfile = { ...userProfile };
+    localStorage.setItem('userProfile', JSON.stringify(userProfile));
 }
 
 function setActiveTab(tabId) {
@@ -58,8 +59,8 @@ function renderHome() {
                 <div class="flex flex-col items-center justify-center min-h-full p-4 pb-20">
                     ${userProfile ? `
                         <div class="mb-6 text-center">
-                            <img src="${userProfile.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
-                                 alt="Profile" class="profile-picture mx-auto mb-2" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'">
+                            <img src="${userProfile.picture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg?nii=t'}" 
+     alt="Profile" class="profile-picture mx-auto mb-4">
                             <h2 class="text-lg font-semibold">Ahoj, ${userProfile.name}!</h2>
                         </div>
                     ` : ''}
@@ -232,15 +233,15 @@ function renderAccount() {
     setActiveTab('tab-account');
     const content = document.getElementById("content");
     if (!userProfile) {
-                renderProfileSetup();
-                return;
-            }
+        renderProfileSetup();
+        return;
+    }
 
     content.innerHTML = `
                 <div class="p-4 min-h-full pb-20">
                     <div class="text-center mb-6">
-                        <img src="${userProfile.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
-                             alt="Profile" class="profile-picture mx-auto mb-4" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'">
+                        <img src="${userProfile.picture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg?nii=t'}" 
+     alt="Profile" class="profile-picture mx-auto mb-4">
                         <h2 class="text-xl font-bold">${userProfile.name}</h2>
                         <button id="editProfileBtn" class="text-blue-500 text-sm mt-2 hover:text-blue-600 transition-colors">
                             Upravit profil
@@ -250,8 +251,8 @@ function renderAccount() {
                     <div class="space-y-4">
                         <h3 class="text-lg font-semibold">Tvoje sety:</h3>
                         ${userSets.length === 0 ?
-                '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
-                userSets.map((set, i) => `
+            '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
+            userSets.map((set, i) => `
                             <div class="bg-white p-4 rounded-lg border shadow-sm">
                                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                     <div class="flex-1">
@@ -269,7 +270,7 @@ function renderAccount() {
                                 </div>
                             </div>
                         `).join("")
-            }
+        }
                     </div>
                 </div>
             `;
@@ -304,8 +305,8 @@ function renderProfileSetup() {
                         <h2 class="text-xl font-bold mb-6 text-center">${userProfile ? 'Upravit profil' : 'Vytvoř si profil'}</h2>
                         
                         <div class="text-center mb-6">
-                            <img id="profilePreview" src="${userProfile?.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
-                                 alt="Profile Preview" class="profile-picture mx-auto mb-4" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'>
+                            <img src="${userProfile.picture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg?nii=t'}" 
+     alt="Profile" class="profile-picture mx-auto mb-4">
                         </div>
                         
                         <div class="space-y-4">
@@ -336,7 +337,7 @@ function renderProfileSetup() {
         if (url) {
             profilePreview.src = url;
         } else {
-            profilePreview.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>';
+            profilePreview = 'https://via.placeholder.com/80x80/e5e7eb/6b7280?text=User';
         }
     });
 
