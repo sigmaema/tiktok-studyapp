@@ -2,6 +2,7 @@
 let sets = [];
 let userSets = [];
 let currentPracticeSession = null;
+let userProfile = null;
 
 async function loadSets() {
     try {
@@ -20,15 +21,25 @@ async function loadSets() {
             }
         ];
     }
-    const saved = localStorage.getItem('userSets');
-    if (saved) {
-        userSets = JSON.parse(saved);
+    const savedSets = window.savedUserSets;
+    if (savedSets) {
+        userSets = savedSets;
     }
+
+    const savedProfile = window.savedUserProfile;
+    if (savedProfile) {
+        userProfile = savedProfile;
+    }
+
 }
 // new sets are saved to localstorage
 function saveUserSets() {
-    localStorage.setItem('userSets', JSON.stringify(userSets));
+    window.savedUserSets = [...userSets]; // ✅
 }
+function saveUserProfile() {
+    window.savedUserProfile = { ...userProfile };
+}
+
 function setActiveTab(tabId) {
     document.querySelectorAll('nav button').forEach(btn => {
         btn.classList.remove('text-blue-500');
@@ -44,16 +55,24 @@ function renderHome() {
     const allSets = [...sets, ...userSets];
     // home screen 
     content.innerHTML = `
-        <div class="flex flex-col items-center justify-center min-h-screen p-4">
-            <h2 class="text-xl font-bold mb-6">Vyber set k procvičování</h2>
-            <select id="setSelect" class="border rounded-lg p-3 w-full max-w-md mb-4 bg-white">
-                ${allSets.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}
-            </select>
-            <button id="startSet" class="bg-blue-500 text-white px-6 py-3 rounded-lg w-full max-w-md">
-                Začít procvičovat
-            </button>
-        </div>
-    `;
+                <div class="flex flex-col items-center justify-center min-h-full p-4 pb-20">
+                    ${userProfile ? `
+                        <div class="mb-6 text-center">
+                            <img src="${userProfile.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
+                                 alt="Profile" class="profile-picture mx-auto mb-2" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'">
+                            <h2 class="text-lg font-semibold">Ahoj, ${userProfile.name}!</h2>
+                        </div>
+                    ` : ''}
+                    
+                    <h2 class="text-xl font-bold mb-6 text-center">Vyber set k procvičování</h2>
+                    <select id="setSelect" class="border rounded-lg p-3 w-full max-w-md mb-4 bg-white text-base">
+                        ${allSets.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}
+                    </select>
+                    <button id="startSet" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full max-w-md transition-colors">
+                        Začít procvičovat
+                    </button>
+                </div>
+            `;
 
     document.getElementById("startSet").addEventListener("click", () => {
         const idx = parseInt(document.getElementById("setSelect").value);
@@ -66,40 +85,42 @@ function renderCreate() {
     const content = document.getElementById("content");
 
     //creating a new set
-    //TODO: make sets and questions editable after saving
-
     content.innerHTML = `
-        <div class="p-4 min-h-screen">
-            <h2 class="text-xl font-bold mb-6 text-center">Vytvoř nový set</h2>
-            <div id="createSetForm">
-                <input type="text" id="setName" placeholder="Název setu" 
-                       class="border rounded-lg p-3 w-full mb-4 bg-white">
-                <button id="createSetBtn" class="bg-blue-500 text-white px-6 py-3 rounded-lg w-full">
-                    Pokračovat
-                </button>
-            </div>
-            <div id="questionCreator" style="display: none;">
-                <div id="questionTabs" class="flex flex-wrap gap-2 mb-4 border-b pb-2"></div>
-                <div class="space-y-4">
-                    <input type="text" id="questionInput" placeholder="Zadej otázku" 
-                           class="border rounded-lg p-3 w-full bg-white">
-                    <input type="text" id="answerInput" placeholder="Zadej odpověď" 
-                           class="border rounded-lg p-3 w-full bg-white">
-                    <div class="flex gap-2">
-                        <button id="addQuestionBtn" class="bg-green-500 text-white px-4 py-2 rounded-lg flex-1">
-                            Přidat otázku
-                        </button>
-                        <button id="saveSetBtn" class="bg-blue-500 text-white px-4 py-2 rounded-lg flex-1">
-                            Uložit set
+                <div class="p-4 min-h-full pb-20">
+                    <h2 class="text-xl font-bold mb-6 text-center">Vytvoř nový set</h2>
+                    <div id="createSetForm">
+                        <input type="text" id="setName" placeholder="Název setu" 
+                               class="border rounded-lg p-3 w-full mb-4 bg-white text-base">
+                        <button id="createSetBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full transition-colors">
+                            Pokračovat
                         </button>
                     </div>
+                    <div id="questionCreator" style="display: none;">
+                        <div id="questionTabs" class="flex flex-wrap gap-2 mb-4 border-b pb-2"></div>
+                        <div class="space-y-4">
+                            <input type="text" id="questionInput" placeholder="Zadej otázku" 
+                                   class="border rounded-lg p-3 w-full bg-white text-base">
+                            <input type="text" id="answerInput" placeholder="Zadej odpověď" 
+                                   class="border rounded-lg p-3 w-full bg-white text-base">
+                            <div class="flex flex-col sm:flex-row gap-2">
+                                <button id="addQuestionBtn" class="bg-green-500 hover:bg-green-600 text-white px-4 py-3 rounded-lg flex-1 transition-colors">
+                                    <span id="addQuestionText">Přidat otázku</span>
+                                </button>
+                                <button id="saveSetBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-3 rounded-lg flex-1 transition-colors">
+                                    Uložit set
+                                </button>
+                                <button id="cancelEditBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-4 py-3 rounded-lg flex-1 transition-colors" style="display: none;">
+                                    Zrušit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    `;
+            `;
 
     let currentSet = { name: "", questions: [] };
     let editingQuestion = -1;
+    let isEditingSet = false;
 
     document.getElementById("createSetBtn").addEventListener("click", () => {
         const name = document.getElementById("setName").value.trim();
@@ -141,9 +162,11 @@ function renderCreate() {
         if (index >= 0 && currentSet.questions[index]) {
             document.getElementById("questionInput").value = currentSet.questions[index].q;
             document.getElementById("answerInput").value = currentSet.questions[index].a;
+            document.getElementById("addQuestionText").textContent = "Upravit otázku";
         } else {
             document.getElementById("questionInput").value = "";
             document.getElementById("answerInput").value = "";
+            document.getElementById("addQuestionText").textContent = "Přidat otázku";
         }
         updateQuestionTabs();
     }
@@ -166,6 +189,7 @@ function renderCreate() {
         document.getElementById("questionInput").value = "";
         document.getElementById("answerInput").value = "";
         editingQuestion = -1;
+        document.getElementById("addQuestionText").textContent = "Přidat otázku";
         updateQuestionTabs();
     });
 
@@ -174,51 +198,84 @@ function renderCreate() {
             alert("Přidej alespoň jednu otázku!");
             return;
         }
-
-        userSets.push(currentSet);
+        if (isEditingSet) {
+            const setIndex = window.editingSetIndex;
+            userSets[setIndex] = currentSet;
+        } else {
+            userSets.push(currentSet);
+        }
         saveUserSets();
         alert(`Set "${currentSet.name}" byl uložen!`);
         renderHome();
     });
+    if (window.editingSetIndex !== undefined) {
+        const setToEdit = userSets[window.editingSetIndex];
+        currentSet = JSON.parse(JSON.stringify(setToEdit));
+        isEditingSet = true;
+
+        document.getElementById("setName").value = currentSet.name;
+        document.getElementById("createSetForm").style.display = "none";
+        document.getElementById("questionCreator").style.display = "block";
+        document.getElementById("cancelEditBtn").style.display = "block";
+
+        document.getElementById("cancelEditBtn").addEventListener("click", () => {
+            delete window.editingSetIndex;
+            renderAccount();
+        });
+
+        updateQuestionTabs();
+        delete window.editingSetIndex;
+    }
 }
-//user account showing user created sets, will be editable later
+//user account showing user created sets, user can add pfp and their name (before creating profile it shows some gibberish tho)
 function renderAccount() {
     setActiveTab('tab-account');
     const content = document.getElementById("content");
+    if (!userProfile) {
+                renderProfileSetup();
+                return;
+            }
 
     content.innerHTML = `
-        <div class="p-4 min-h-screen">
-            <div class="text-center mb-6">
-                <div class="w-20 h-20 bg-blue-500 rounded-full mx-auto mb-4 flex items-center justify-center text-white text-2xl">
-                    👤
+                <div class="p-4 min-h-full pb-20">
+                    <div class="text-center mb-6">
+                        <img src="${userProfile.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
+                             alt="Profile" class="profile-picture mx-auto mb-4" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'">
+                        <h2 class="text-xl font-bold">${userProfile.name}</h2>
+                        <button id="editProfileBtn" class="text-blue-500 text-sm mt-2 hover:text-blue-600 transition-colors">
+                            Upravit profil
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <h3 class="text-lg font-semibold">Tvoje sety:</h3>
+                        ${userSets.length === 0 ?
+                '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
+                userSets.map((set, i) => `
+                            <div class="bg-white p-4 rounded-lg border shadow-sm">
+                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                    <div class="flex-1">
+                                        <h4 class="font-semibold text-base">${set.name}</h4>
+                                        <p class="text-sm text-gray-500">${set.questions.length} otázek</p>
+                                    </div>
+                                    <div class="flex gap-2">
+                                        <button class="edit-set bg-blue-100 hover:bg-blue-200 text-blue-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none" data-index="${i}">
+                                            Upravit
+                                        </button>
+                                        <button class="delete-set bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none" data-index="${i}">
+                                            Smazat
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join("")
+            }
+                    </div>
                 </div>
-                <h2 class="text-xl font-bold">Tvůj účet</h2>
-            </div>
-            
-            <div class="space-y-4">
-                <h3 class="text-lg font-semibold">Tvoje sety:</h3>
-                ${userSets.length === 0 ?
-            '<p class="text-gray-500 text-center">Zatím nemáš žádné sety</p>' :
-            userSets.map((set, i) => `
-                        <div class="bg-white p-4 rounded-lg border flex justify-between items-center">
-                            <div>
-                                <h4 class="font-semibold">${set.name}</h4>
-                                <p class="text-sm text-gray-500">${set.questions.length} otázek</p>
-                            </div>
-                            <div class="space-x-2">
-                                <button class="edit-set bg-blue-100 text-blue-600 px-3 py-1 rounded text-sm" data-index="${i}">
-                                    Upravit
-                                </button>
-                                <button class="delete-set bg-red-100 text-red-600 px-3 py-1 rounded text-sm" data-index="${i}">
-                                    Smazat
-                                </button>
-                            </div>
-                        </div>
-                    `).join("")
-        }
-            </div>
-        </div>
-    `;
+            `;
+    document.getElementById("editProfileBtn").addEventListener("click", () => {
+        renderProfileSetup();
+    });
 
     content.querySelectorAll('.edit-set').forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -238,8 +295,76 @@ function renderAccount() {
         });
     });
 }
+function renderProfileSetup() {
+    const content = document.getElementById("content");
 
+    content.innerHTML = `
+                <div class="p-4 min-h-full pb-20 flex flex-col justify-center">
+                    <div class="max-w-md mx-auto w-full">
+                        <h2 class="text-xl font-bold mb-6 text-center">${userProfile ? 'Upravit profil' : 'Vytvoř si profil'}</h2>
+                        
+                        <div class="text-center mb-6">
+                            <img id="profilePreview" src="${userProfile?.picture || 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>'}" 
+                                 alt="Profile Preview" class="profile-picture mx-auto mb-4" onerror="this.src='data:image/svg+xml,<svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 100 100&quot;><circle cx=&quot;50&quot; cy=&quot;50&quot; r=&quot;50&quot; fill=&quot;%23e5e7eb&quot;/><text x=&quot;50&quot; y=&quot;58&quot; font-size=&quot;40&quot; text-anchor=&quot;middle&quot; fill=&quot;%236b7280&quot;>👤</text></svg>'>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <input type="text" id="profileName" placeholder="Tvoje jméno" value="${userProfile?.name || ''}"
+                                   class="border rounded-lg p-3 w-full bg-white text-base">
+                            <input type="url" id="profilePicture" placeholder="URL profilové fotky (volitelné)" value="${userProfile?.picture || ''}"
+                                   class="border rounded-lg p-3 w-full bg-white text-base">
+                            <div class="flex flex-col gap-2">
+                                <button id="saveProfileBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                    ${userProfile ? 'Uložit změny' : 'Vytvořit profil'}
+                                </button>
+                                ${userProfile ? `
+                                    <button id="cancelProfileBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors">
+                                        Zrušit
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+    const profilePictureInput = document.getElementById("profilePicture");
+    const profilePreview = document.getElementById("profilePreview");
+
+    profilePictureInput.addEventListener("input", (e) => {
+        const url = e.target.value.trim();
+        if (url) {
+            profilePreview.src = url;
+        } else {
+            profilePreview.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%23e5e7eb"/><text x="50" y="58" font-size="40" text-anchor="middle" fill="%236b7280">👤</text></svg>';
+        }
+    });
+
+    document.getElementById("saveProfileBtn").addEventListener("click", () => {
+        const name = document.getElementById("profileName").value.trim();
+        if (!name) {
+            alert("Zadej své jméno!");
+            return;
+        }
+
+        userProfile = {
+            name: name,
+            picture: document.getElementById("profilePicture").value.trim()
+        };
+
+        saveUserProfile();
+        alert("Profil byl uložen!");
+        renderAccount();
+    });
+
+    if (userProfile && document.getElementById("cancelProfileBtn")) {
+        document.getElementById("cancelProfileBtn").addEventListener("click", () => {
+            renderAccount();
+        });
+    }
+}
 function editUserSet(index) {
+    window.editingSetIndex = index;
     renderCreate();
 }
 
@@ -261,18 +386,18 @@ function startPractice(set) {
         questionDiv.className = "questionBlock flex flex-col items-center justify-center min-h-screen text-center p-4 snap-start";
         questionDiv.id = `question-${index}`;
         questionDiv.innerHTML = `
-            <div class="w-full max-w-md">
-                <div class="mb-4">
-                    <span class="text-sm text-gray-500">Otázka ${index + 1} z ${set.questions.length}</span>
-                </div>
-                <h2 class="text-xl font-bold mb-6">${question.q}</h2>
-                <input type="text" placeholder="Tvoje odpověď" 
-                       class="answer-input border px-4 py-3 rounded-lg w-full mb-4 text-center"/>
-                <button class="submit-answer bg-blue-500 text-white px-6 py-3 rounded-lg w-full">
-                    Odeslat
-                </button>
-            </div>
-        `;
+                    <div class="w-full max-w-md">
+                        <div class="mb-4">
+                            <span class="text-sm text-gray-500">Otázka ${index + 1} z ${set.questions.length}</span>
+                        </div>
+                        <h2 class="text-xl font-bold mb-6 px-2">${question.q}</h2>
+                        <input type="text" placeholder="Tvoje odpověď" 
+                               class="answer-input border px-4 py-3 rounded-lg w-full mb-4 text-center text-base"/>
+                        <button class="submit-answer bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full transition-colors">
+                            Odeslat
+                        </button>
+                    </div>
+                `;
 
         content.appendChild(questionDiv);
 
@@ -309,6 +434,7 @@ function startPractice(set) {
             }
             input.disabled = true;
             button.disabled = true;
+            button.classList.add('opacity-50', 'cursor-not-allowed');
             if (index === set.questions.length - 1) {
                 setTimeout(() => {
                     addResultsSummary();
@@ -329,33 +455,45 @@ function addResultsSummary() {
     const session = currentPracticeSession;
     const correct = session.results.filter(r => r.correct).length;
     const total = session.results.length;
+    const percentage = Math.round((correct / total) * 100);
+
 
     const summaryDiv = document.createElement("div");
     summaryDiv.className = "questionBlock flex flex-col items-center justify-center min-h-screen text-center p-4 snap-start";
     summaryDiv.innerHTML = `
-        <div class="w-full max-w-md">
-            <h2 class="text-2xl font-bold mb-6">Výsledky</h2>
-            <div class="text-4xl mb-4">${correct === total ? '🎉' : correct > total / 2 ? '👍' : '📚'}</div>
-            <p class="text-xl mb-6">Správně: ${correct}/${total}</p>
-            <div class="space-y-2 mb-6 text-left">
-                ${session.results.map((result, i) => `
-                    <div class="p-3 rounded ${result.correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}">
-                        <div class="font-semibold text-sm">${i + 1}. ${result.question}</div>
-                        <div class="text-sm text-gray-600">
-                            Tvoje odpověď: ${result.userAnswer || '(prázdné)'}
-                            ${!result.correct ? `<br>Správně: ${result.correctAnswer}` : ''}
-                        </div>
+                <div class="w-full max-w-md">
+                    <h2 class="text-2xl font-bold mb-6">Výsledky</h2>
+                    <div class="text-6xl mb-4">${correct === total ? '🎉' : correct > total / 2 ? '👍' : '📚'}</div>
+                    <p class="text-xl mb-2">Správně: ${correct}/${total}</p>
+                    <p class="text-lg text-gray-600 mb-6">${percentage}% úspěšnost</p>
+                    <div class="space-y-2 mb-6 text-left max-h-60 overflow-y-auto">
+                        ${session.results.map((result, i) => `
+                            <div class="p-3 rounded-lg text-sm ${result.correct ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}">
+                                <div class="font-semibold mb-1">${i + 1}. ${result.question}</div>
+                                <div class="text-gray-600">
+                                    Tvoje odpověď: <span class="font-medium">${result.userAnswer || '(prázdné)'}</span>
+                                    ${!result.correct ? `<br>Správně: <span class="font-medium text-green-600">${result.correctAnswer}</span>` : ''}
+                                </div>
+                            </div>
+                        `).join("")}
                     </div>
-                `).join("")}
-            </div>
-            <button id="backToHome" class="bg-blue-500 text-white px-6 py-3 rounded-lg w-full">
-                Zpět na hlavní stránku
-            </button>
-        </div>
-    `;
+                    <div class="flex flex-col gap-2">
+                        <button id="backToHome" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full transition-colors">
+                            Zpět na hlavní stránku
+                        </button>
+                        <button id="retrySet" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg w-full transition-colors">
+                            Zkusit znovu
+                        </button>
+                    </div>
+                </div>
+            `;
 
     content.appendChild(summaryDiv);
     document.getElementById("backToHome").addEventListener("click", renderHome);
+    document.getElementById("retrySet").addEventListener("click", () => {
+        startPractice(currentPracticeSession.set);
+    });
+    summaryDiv.scrollIntoView({ behavior: 'smooth' });
 }
 
 document.getElementById("tab-home").addEventListener("click", renderHome);
@@ -366,3 +504,19 @@ document.getElementById("tab-account").addEventListener("click", renderAccount);
     await loadSets();
     renderHome();
 })();
+let lastTouchEnd = 0;
+document.addEventListener('touchend', function (event) {
+    const now = (new Date()).getTime();
+    if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+    }
+    lastTouchEnd = now;
+}, false);
+
+window.addEventListener('resize', () => {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+});
+
+const vh = window.innerHeight * 0.01;
+document.documentElement.style.setProperty('--vh', `${vh}px`);

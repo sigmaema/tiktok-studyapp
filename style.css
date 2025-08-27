@@ -49,6 +49,7 @@
     margin: 0 auto;
     padding: 20px;
 }
+
 nav {
     height: 60px;
     backdrop-filter: blur(10px);
@@ -59,13 +60,16 @@ nav {
     right: 0;
     z-index: 50;
 }
+
 body {
     position: relative;
     overflow-x: hidden;
 }
+
 * {
     box-sizing: border-box;
 }
+
 .scroll-indicator {
     position: absolute;
     bottom: 80px;
@@ -73,60 +77,171 @@ body {
     transform: translateX(-50%);
     z-index: 10;
 }
+
+.profile-picture {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #3b82f6;
+}
+
+.profile-picture-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #3b82f6;
+}
+
 @media (max-width: 768px) {
     #content {
         -webkit-overflow-scrolling: touch;
         overscroll-behavior-y: contain;
     }
-    
+
     .questionBlock {
         min-height: calc(100vh - 60px);
         padding: 1rem 0.5rem;
     }
-    
+
     .videoWrapper iframe {
         max-width: 350px;
         height: 450px;
     }
-}
-.tiktok-embed {
-    position: relative;
-    margin: 20px 0;
-}
-.questionBlock::before,
-.questionBlock::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    right: 0;
-    height: 100px;
-    z-index: 3;
-}
-.questionBlock::before {
-    top: 0;
+
+    nav {
+        height: 70px;
+    }
+
+    nav .flex {
+        padding: 0.5rem 0;
+    }
+
+    nav button {
+        min-width: 60px;
+    }
+
+    nav span {
+        font-size: 0.75rem;
+    }
+
+    .profile-picture {
+        width: 60px;
+        height: 60px;
+    }
 }
 
-.questionBlock::after {
-    bottom: 0;
+@media (max-width: 480px) {
+    .questionBlock {
+        padding: 1rem 0.5rem;
+    }
+
+    .profile-picture {
+        width: 50px;
+        height: 50px;
+    }
+
+    nav button span:first-child {
+        font-size: 18px;
+    }
+
+    nav button span:last-child {
+        font-size: 0.6rem;
+    }
 }
+
 .animate-bounce {
     animation: bounce 1s infinite;
 }
+
 .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
+
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(-25%);
-        animation-timing-function: cubic-bezier(0.8,0,1,1);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
     }
+
     50% {
         transform: none;
-        animation-timing-function: cubic-bezier(0,0,0.2,1);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
     }
 }
+
 @keyframes pulse {
     50% {
         opacity: .5;
     }
+}
+
+
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+
+    50% {
+        transform: none;
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
+
+@keyframes pulse {
+    50% {
+        opacity: .5;
+    }
+}
+
+input[type="text"],
+input[type="url"],
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    font-size: 16px;
+}
+
+button {
+    min-height: 44px;
+    touch-action: manipulation;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
 }
