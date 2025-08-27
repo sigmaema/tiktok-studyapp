@@ -1,0 +1,132 @@
+.videoWrapper iframe {
+    width: 100%;
+    max-width: 400px;
+    height: 500px;
+    display: block;
+    margin: 0 auto;
+    border-radius: 12px;
+    position: relative;
+    z-index: 1;
+}
+
+.video-embed {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+#content {
+    scroll-snap-type: y mandatory;
+    overflow-y: scroll;
+    height: calc(100vh - 60px);
+    scroll-behavior: smooth;
+    padding-bottom: 0;
+    -webkit-overflow-scrolling: touch;
+    position: relative;
+    z-index: 1;
+}
+
+.questionBlock {
+    scroll-snap-align: start;
+    min-height: calc(100vh - 60px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    scroll-snap-stop: always;
+    position: relative;
+    z-index: 2;
+    background: #f3f4f6;
+    width: 100%;
+}
+
+.videoWrapper {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+}
+nav {
+    height: 60px;
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+}
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+* {
+    box-sizing: border-box;
+}
+.scroll-indicator {
+    position: absolute;
+    bottom: 80px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+}
+@media (max-width: 768px) {
+    #content {
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior-y: contain;
+    }
+    
+    .questionBlock {
+        min-height: calc(100vh - 60px);
+        padding: 1rem 0.5rem;
+    }
+    
+    .videoWrapper iframe {
+        max-width: 350px;
+        height: 450px;
+    }
+}
+.tiktok-embed {
+    position: relative;
+    margin: 20px 0;
+}
+.questionBlock::before,
+.questionBlock::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 100px;
+    z-index: 3;
+}
+.questionBlock::before {
+    top: 0;
+}
+
+.questionBlock::after {
+    bottom: 0;
+}
+.animate-bounce {
+    animation: bounce 1s infinite;
+}
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(-25%);
+        animation-timing-function: cubic-bezier(0.8,0,1,1);
+    }
+    50% {
+        transform: none;
+        animation-timing-function: cubic-bezier(0,0,0.2,1);
+    }
+}
+@keyframes pulse {
+    50% {
+        opacity: .5;
+    }
+}
