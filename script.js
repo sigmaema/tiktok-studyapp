@@ -381,6 +381,7 @@ function startPractice(set) {
     content.innerHTML = "";
     content.style.scrollSnapType = "y mandatory";
     content.style.scrollBehavior = "smooth";
+    content.scrollTo(0, 0);
 
     set.questions.forEach((question, index) => {
         const questionDiv = document.createElement("div");
