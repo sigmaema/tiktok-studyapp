@@ -232,136 +232,238 @@ function renderCreate() {
 function renderAccount() {
     setActiveTab('tab-account');
     const content = document.getElementById("content");
+    
     if (!userProfile) {
         renderProfileSetup();
         return;
     }
 
+    // Ensure safe fallback for profile picture
+    const profilePicture = userProfile.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTAtMTAtNC40NzctMTAtMTAgNC40NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTZzMTYgNy4xNjMgMTYgMTYtNy4xNjMgMTYtMTYgMTYtMTYtNy4xNjMtMTYtMTZ6IiBmaWxsPSIjNmI3MjgwIi8+Cjwvc3ZnPgo=';
+
     content.innerHTML = `
-                <div class="p-4 min-h-full pb-20">
-                    <div class="text-center mb-6">
-                        <img src="${userProfile.picture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg?nii=t'}" 
-     alt="Profile" class="profile-picture mx-auto mb-4">
-                        <h2 class="text-xl font-bold">${userProfile.name}</h2>
-                        <button id="editProfileBtn" class="text-blue-500 text-sm mt-2 hover:text-blue-600 transition-colors">
-                            Upravit profil
-                        </button>
-                    </div>
-                    
-                    <div class="space-y-4">
-                        <h3 class="text-lg font-semibold">Tvoje sety:</h3>
-                        ${userSets.length === 0 ?
-            '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
-            userSets.map((set, i) => `
-                            <div class="bg-white p-4 rounded-lg border shadow-sm">
-                                <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
-                                    <div class="flex-1">
-                                        <h4 class="font-semibold text-base">${set.name}</h4>
-                                        <p class="text-sm text-gray-500">${set.questions.length} otázek</p>
-                                    </div>
-                                    <div class="flex gap-2">
-                                        <button class="edit-set bg-blue-100 hover:bg-blue-200 text-blue-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none" data-index="${i}">
-                                            Upravit
-                                        </button>
-                                        <button class="delete-set bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none" data-index="${i}">
-                                            Smazat
-                                        </button>
-                                    </div>
+        <div class="p-4 min-h-full pb-20">
+            <div class="text-center mb-6">
+                <img src="${profilePicture}" 
+                     alt="Profile" 
+                     class="profile-picture mx-auto mb-4"
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTAtMTAtNC40NzctMTAtMTAgNC40NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTYgcTE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2LTE2LTcuMTYzLTE2LTE2eiIgZmlsbD0iIzZiNzI4MCIvPgo8L3N2Zz4K'">
+                <h2 class="text-xl font-bold">${userProfile.name || 'Uživatel'}</h2>
+                <button id="editProfileBtn" class="text-blue-500 text-sm mt-2 hover:text-blue-600 transition-colors touch-manipulation">
+                    Upravit profil
+                </button>
+            </div>
+            
+            <div class="space-y-4">
+                <h3 class="text-lg font-semibold">Tvoje sety:</h3>
+                ${userSets.length === 0 ?
+                    '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
+                    userSets.map((set, i) => `
+                        <div class="bg-white p-4 rounded-lg border shadow-sm">
+                            <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
+                                <div class="flex-1">
+                                    <h4 class="font-semibold text-base">${set.name || 'Bez názvu'}</h4>
+                                    <p class="text-sm text-gray-500">${(set.questions && set.questions.length) || 0} otázek</p>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button class="edit-set bg-blue-100 hover:bg-blue-200 text-blue-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none touch-manipulation" 
+                                            data-index="${i}"
+                                            type="button">
+                                        Upravit
+                                    </button>
+                                    <button class="delete-set bg-red-100 hover:bg-red-200 text-red-600 px-3 py-2 rounded text-sm transition-colors flex-1 sm:flex-none touch-manipulation" 
+                                            data-index="${i}"
+                                            type="button">
+                                        Smazat
+                                    </button>
                                 </div>
                             </div>
-                        `).join("")
+                        </div>
+                    `).join("")
+                }
+            </div>
+        </div>
+    `;
+
+    // Add event listeners with error handling
+    try {
+        const editProfileBtn = document.getElementById("editProfileBtn");
+        if (editProfileBtn) {
+            editProfileBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                renderProfileSetup();
+            });
         }
-                    </div>
-                </div>
-            `;
-    document.getElementById("editProfileBtn").addEventListener("click", () => {
-        renderProfileSetup();
-    });
 
-    content.querySelectorAll('.edit-set').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.dataset.index);
-            editUserSet(index);
+        // Edit set buttons
+        const editButtons = content.querySelectorAll('.edit-set');
+        editButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    const index = parseInt(e.target.dataset.index);
+                    if (index >= 0 && index < userSets.length) {
+                        editUserSet(index);
+                    }
+                } catch (error) {
+                    console.error('Error editing set:', error);
+                    alert('Chyba při úpravě setu');
+                }
+            });
         });
-    });
 
-    content.querySelectorAll('.delete-set').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const index = parseInt(e.target.dataset.index);
-            if (confirm('Opravdu chceš smazat tento set?')) {
-                userSets.splice(index, 1);
-                saveUserSets();
-                renderAccount();
-            }
+        // Delete set buttons
+        const deleteButtons = content.querySelectorAll('.delete-set');
+        deleteButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                try {
+                    const index = parseInt(e.target.dataset.index);
+                    if (index >= 0 && index < userSets.length) {
+                        if (confirm('Opravdu chceš smazat tento set?')) {
+                            userSets.splice(index, 1);
+                            saveUserSets();
+                            renderAccount();
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error deleting set:', error);
+                    alert('Chyba při mazání setu');
+                }
+            });
         });
-    });
+
+    } catch (error) {
+        console.error('Error setting up account page:', error);
+        content.innerHTML = `
+            <div class="p-4 text-center">
+                <h2 class="text-xl font-bold mb-4">Chyba</h2>
+                <p class="text-red-600 mb-4">Nepodařilo se načíst účet. Zkus to znovu.</p>
+                <button onclick="renderHome()" class="bg-blue-500 text-white px-4 py-2 rounded">
+                    Zpět na hlavní stránku
+                </button>
+            </div>
+        `;
+    }
 }
+
+// Fixed renderProfileSetup function
 function renderProfileSetup() {
     const content = document.getElementById("content");
 
+    // Safe fallback for profile picture - fix the exact error
+    const profilePicture = (userProfile?.picture) || '';
+
     content.innerHTML = `
-                <div class="p-4 min-h-full pb-20 flex flex-col justify-center">
-                    <div class="max-w-md mx-auto w-full">
-                        <h2 class="text-xl font-bold mb-6 text-center">${userProfile ? 'Upravit profil' : 'Vytvoř si profil'}</h2>
-                        
-                        <div class="text-center mb-6">
-                            <img src="${userProfile.picture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg?nii=t'}" 
-     alt="Profile" class="profile-picture mx-auto mb-4">
-                        </div>
-                        
-                        <div class="space-y-4">
-                            <input type="text" id="profileName" placeholder="Tvoje jméno" value="${userProfile?.name || ''}"
-                                   class="border rounded-lg p-3 w-full bg-white text-base">
-                            <input type="url" id="profilePicture" placeholder="URL profilové fotky (volitelné)" value="${userProfile?.picture || ''}"
-                                   class="border rounded-lg p-3 w-full bg-white text-base">
-                            <div class="flex flex-col gap-2">
-                                <button id="saveProfileBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors">
-                                    ${userProfile ? 'Uložit změny' : 'Vytvořit profil'}
-                                </button>
-                                ${userProfile ? `
-                                    <button id="cancelProfileBtn" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors">
-                                        Zrušit
-                                    </button>
-                                ` : ''}
-                            </div>
-                        </div>
+        <div class="p-4 min-h-full pb-20 flex flex-col justify-center">
+            <div class="max-w-md mx-auto w-full">
+                <h2 class="text-xl font-bold mb-6 text-center">${userProfile ? 'Upravit profil' : 'Vytvoř si profil'}</h2>
+                
+                <div class="text-center mb-6">
+                    <img src="${profilePicture || 'https://i.pinimg.com/474x/65/1c/6d/651c6da502353948bdc929f02da2b8e0.jpg'}" 
+                         alt="Profile" 
+                         class="profile-picture mx-auto mb-4"
+                         id="profilePreview"
+                         style="display: ${profilePicture ? 'block' : 'none'}">
+                    ${!profilePicture ? '<div class="profile-picture mx-auto mb-4 bg-gray-300 flex items-center justify-center text-gray-600 text-2xl">👤</div>' : ''}
+                </div>
+                
+                <div class="space-y-4">
+                    <input type="text" 
+                           id="profileName" 
+                           placeholder="Tvoje jméno" 
+                           value="${userProfile?.name || ''}"
+                           class="border rounded-lg p-3 w-full bg-white text-base touch-manipulation">
+                    <input type="url" 
+                           id="profilePicture" 
+                           placeholder="URL profilové fotky (volitelné)" 
+                           value="${userProfile?.picture || ''}"
+                           class="border rounded-lg p-3 w-full bg-white text-base touch-manipulation">
+                    <div class="flex flex-col gap-2">
+                        <button id="saveProfileBtn" 
+                                type="button"
+                                class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg transition-colors touch-manipulation">
+                            ${userProfile ? 'Uložit změny' : 'Vytvořit profil'}
+                        </button>
+                        ${userProfile ? `
+                            <button id="cancelProfileBtn" 
+                                    type="button"
+                                    class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-3 rounded-lg transition-colors touch-manipulation">
+                                Zrušit
+                            </button>
+                        ` : ''}
                     </div>
                 </div>
-            `;
+            </div>
+        </div>
+    `;
 
-    const profilePictureInput = document.getElementById("profilePicture");
-    const profilePreview = document.getElementById("profilePreview");
+    // Add event listeners with error handling
+    try {
+        const profilePictureInput = document.getElementById("profilePicture");
+        const profilePreview = document.getElementById("profilePreview");
 
-    profilePictureInput.addEventListener("input", (e) => {
-        const url = e.target.value.trim();
-        if (url) {
-            profilePreview.src = url;
-        } else {
-            profilePreview = 'https://via.placeholder.com/80x80/e5e7eb/6b7280?text=User';
+        if (profilePictureInput && profilePreview) {
+            profilePictureInput.addEventListener("input", (e) => {
+                const url = e.target.value.trim();
+                if (url) {
+                    profilePreview.src = url;
+                } else {
+                    profilePreview.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGNpcmNsZSBjeD0iNDAiIGN5PSIzMCIgcj0iOCIgZmlsbD0iIzZiNzI4MCIvPjxwYXRoIGQ9Ik0yNiA1NGMwLTcuNzMyIDYuMjY4LTE0IDE0LTE0czE0IDYuMjY4IDE0IDE0djJIMjZ2LTJ6IiBmaWxsPSIjNmI3MjgwIi8+PC9zdmc+';
+                }
+            });
         }
-    });
 
-    document.getElementById("saveProfileBtn").addEventListener("click", () => {
-        const name = document.getElementById("profileName").value.trim();
-        if (!name) {
-            alert("Zadej své jméno!");
-            return;
+        const saveBtn = document.getElementById("saveProfileBtn");
+        if (saveBtn) {
+            saveBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const nameInput = document.getElementById("profileName");
+                const pictureInput = document.getElementById("profilePicture");
+                
+                if (!nameInput) {
+                    alert("Chyba: pole pro jméno nebylo nalezeno");
+                    return;
+                }
+                
+                const name = nameInput.value.trim();
+                if (!name) {
+                    alert("Zadej své jméno!");
+                    return;
+                }
+
+                userProfile = {
+                    name: name,
+                    picture: pictureInput ? pictureInput.value.trim() : ''
+                };
+
+                try {
+                    saveUserProfile();
+                    alert("Profil byl uložen!");
+                    renderAccount();
+                } catch (error) {
+                    console.error('Error saving profile:', error);
+                    alert("Chyba při ukládání profilu");
+                }
+            });
         }
 
-        userProfile = {
-            name: name,
-            picture: document.getElementById("profilePicture").value.trim()
-        };
+        const cancelBtn = document.getElementById("cancelProfileBtn");
+        if (cancelBtn) {
+            cancelBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                renderAccount();
+            });
+        }
 
-        saveUserProfile();
-        alert("Profil byl uložen!");
-        renderAccount();
-    });
-
-    if (userProfile && document.getElementById("cancelProfileBtn")) {
-        document.getElementById("cancelProfileBtn").addEventListener("click", () => {
-            renderAccount();
-        });
+    } catch (error) {
+        console.error('Error setting up profile page:', error);
     }
 }
 function editUserSet(index) {
