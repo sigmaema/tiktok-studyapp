@@ -138,83 +138,81 @@
       }
     ]
   },
-  [
-    {
-      "name": "Biologie buňka",
-      "questions": [
-        {
-          "q": "Nauka o buňkách",
-          "a": "cytologie"
-        },
-        {
-          "q": "Jaké jsou teorie vzniku buňky?",
-          "a": "abiogeneze, kreacionismus, panspermie"
-        },
-        {
-          "q": "V jakých formách najdeme sacharidy? (v živočiších i v rostlinnách)",
-          "a": "glukóza, glykogen, škrob"
-        },
-        {
-          "q": "Na stavbě jakých částí buňky se podílí sacharidy?",
-          "a": "buněčná stěna, DNA a RNA"
-        },
-        {
-          "q": "Co jsou z chemického hlediska lipidy?",
-          "a": "estery glycerolu a mastných kyselin"
-        },
-        {
-          "q": "Jaké funkce mají lipidy?",
-          "a": "zdroj a zásoba energie, termoregulace, stavební funkce"
-        },
-        {
-          "q": "Jaké funkce mají proteiny?",
-          "a": "stavební, enzymy, hormony, protilátky, zdroj energie"
-        },
-        {
-          "q": "Z čeho je buněčná membrána?",
-          "a": "fosfolipidy"
-        },
-        {
-          "q": "Jaké jsou vlastnosti membrány?",
-          "a": "univerzální, polopropustná, tekutá, flexibilní"
-        },
-        {
-          "q": "Jaké funkce mají proteiny v membráně?",
-          "a": "přenašeče, kanály, receptory, enzymy"
-        },
-        {
-          "q": "Co je endoplazmatické retikulum?",
-          "a": "membránový systém napojený na jádro"
-        },
-        {
-          "q": "Jaké funkce má ER?",
-          "a": "proteiny v něm získávají správnou strukturu, syntéza tuků a cukrů, vezikulární transport"
-        },
-        {
-          "q": "Jaká je funkce Golgiho aparátu?",
-          "a": "příjmá proteiny, lipidy, sacharidy z ER, chemicky je upravuje a rozesílá je do jiných organel nebo ven z buňky"
-        },
-        {
-          "q": "Jaká je funkce lyzosomu?",
-          "a": "odbourávání látek"
-        },
-        {
-          "q": "Co obsahuje vakuola?",
-          "a": "vodu, odpadní látky, barviva"
-        },
-        {
-          "q": "Co dělá mitochondrie?",
-          "a": "spaluje živiny za vzniku ATP"
-        },
-        {
-          "q": "Jaké jsou důkazy pro teorii evolučního původu mitochondrie?",
-          "a": "dvojitá membrána, vlastní DNA a ribosomy"
-        },
-        {
-          "q": "Jak chloroplast vytváří energii?",
-          "a": "fotosyntéza - chlorofyl zachytává sluneční energii"
-        }
-      ]
-    }
-  ]
+  {
+    "name": "Biologie buňka",
+    "questions": [
+      {
+        "q": "Nauka o buňkách",
+        "a": "cytologie"
+      },
+      {
+        "q": "Jaké jsou teorie vzniku buňky?",
+        "a": "abiogeneze, kreacionismus, panspermie"
+      },
+      {
+        "q": "V jakých formách najdeme sacharidy? (v živočiších i v rostlinnách)",
+        "a": "glukóza, glykogen, škrob"
+      },
+      {
+        "q": "Na stavbě jakých částí buňky se podílí sacharidy?",
+        "a": "buněčná stěna, DNA a RNA"
+      },
+      {
+        "q": "Co jsou z chemického hlediska lipidy?",
+        "a": "estery glycerolu a mastných kyselin"
+      },
+      {
+        "q": "Jaké funkce mají lipidy?",
+        "a": "zdroj a zásoba energie, termoregulace, stavební funkce"
+      },
+      {
+        "q": "Jaké funkce mají proteiny?",
+        "a": "stavební, enzymy, hormony, protilátky, zdroj energie"
+      },
+      {
+        "q": "Z čeho je buněčná membrána?",
+        "a": "fosfolipidy"
+      },
+      {
+        "q": "Jaké jsou vlastnosti membrány?",
+        "a": "univerzální, polopropustná, tekutá, flexibilní"
+      },
+      {
+        "q": "Jaké funkce mají proteiny v membráně?",
+        "a": "přenašeče, kanály, receptory, enzymy"
+      },
+      {
+        "q": "Co je endoplazmatické retikulum?",
+        "a": "membránový systém napojený na jádro"
+      },
+      {
+        "q": "Jaké funkce má ER?",
+        "a": "proteiny v něm získávají správnou strukturu, syntéza tuků a cukrů, vezikulární transport"
+      },
+      {
+        "q": "Jaká je funkce Golgiho aparátu?",
+        "a": "příjmá proteiny, lipidy, sacharidy z ER, chemicky je upravuje a rozesílá je do jiných organel nebo ven z buňky"
+      },
+      {
+        "q": "Jaká je funkce lyzosomu?",
+        "a": "odbourávání látek"
+      },
+      {
+        "q": "Co obsahuje vakuola?",
+        "a": "vodu, odpadní látky, barviva"
+      },
+      {
+        "q": "Co dělá mitochondrie?",
+        "a": "spaluje živiny za vzniku ATP"
+      },
+      {
+        "q": "Jaké jsou důkazy pro teorii evolučního původu mitochondrie?",
+        "a": "dvojitá membrána, vlastní DNA a ribosomy"
+      },
+      {
+        "q": "Jak chloroplast vytváří energii?",
+        "a": "fotosyntéza - chlorofyl zachytává sluneční energii"
+      }
+    ]
+  }
 ]
