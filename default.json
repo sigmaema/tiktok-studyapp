@@ -214,5 +214,138 @@
         "a": "fotosyntéza - chlorofyl zachytává sluneční energii"
       }
     ]
+  },
+  {
+    "name": "Biblická jména",
+    "questions": [
+      {
+        "q": "Adam a Eva",
+        "a": "První lidé které bůh stvořil"
+      },
+      {
+        "q": "Eden",
+        "a": "ráj - byli v něm Adam a Eva"
+      },
+      {
+        "q": "Kain a Ábel",
+        "a": "Kain zabil Ábela ze žárlivosti"
+      },
+      {
+        "q": "Noe a Archa, Ararat",
+        "a": "Noe vzal na loď pár od každého druhu, archa se pak zastavila na hoře Ararat"
+      },
+      {
+        "q": "Sodoma a Gomora",
+        "a": "Dvě města zničena bohem, přežili pouze Lot a jeho žena"
+      },
+      {
+        "q": "Lot a jeho žena",
+        "a": "Jediní přeživší zničení Sodomy a Gomory, Lotova žena při útěku zkameněla (ohlédla se)"
+      },
+      {
+        "q": "Babylon a Babylonská věž",
+        "a": "Chtěli ji postavit až do nebe, aby byli jako bůh, ten jim za trest zmátl jazyky a poslal je do světa"
+      },
+      {
+        "q": "Abrahám a Izák",
+        "a": "Abrahám byl praotec víry, za důkaz měl obětovat syna Izáka (bůh mu namísto syna poslal k oběti berana)"
+      },
+      {
+        "q": "Jákob a Ezau",
+        "a": "Jákob si za mísu čočky koupil Ezauovo prvorozenectví, lstí získal požehnání od otce"
+      },
+      {
+        "q": "Josef a jeho bratři",
+        "a": "Josef byl bratry prodán do Egypta, dostal se do vysokých pozic a zachránil zemi před hladomorem"
+      },
+      {
+        "q": "Mojžíš a Sinaj",
+        "a": "Mojžíš vedl Izraelity z Egypta do země zaslíbené, sám do ní však vstoupit nemohl, na hoře Sinaj našel desatero přikázání"
+      },
+      {
+        "q": "David a Goliáš",
+        "a": "David přemohl Goliáše prakem, David se později stal králem"
+      },
+      {
+        "q": "Samson a Dalila",
+        "a": "Samson měl nadlidskou sílu díky svým vlasům, milenka Dalila mu je ostříhala"
+      },
+      {
+        "q": "Filištínští",
+        "a": "Samson proti nim bojoval, nepřátelé izraelitů"
+      },
+      {
+        "q": "Šalamoun",
+        "a": "nechal vystavět chrám v Jeruzalémě, moudrý, izraelský král"
+      },
+      {
+        "q": "Jonáš a velryba",
+        "a": "utekl před božím úkolem, pohlcen velrybou"
+      },
+      {
+        "q": "královna Ester",
+        "a": "královna Persie, zachránila národ před vyhlazením"
+      },
+      {
+        "q": "Ježíš a ryby",
+        "a": "\"učiním z vás rybáře lidí\" - učedníky"
+      },
+      {
+        "q": "Ježíš a osel",
+        "a": "vjel na něm do Jeruzaléma"
+      },
+      {
+        "q": "Ježíš a beránek",
+        "a": "symbol oběti za hříchy lidstva"
+      },
+      {
+        "q": "Ježíš a víno",
+        "a": "symbol krve při poslední večeři"
+      },
+      {
+        "q": "INRI",
+        "a": "Ježíš nazaretský, král židovský"
+      },
+      {
+        "q": "nevěřící Tomáš",
+        "a": "Apoštol, nevěřil ve vzkříšení Ježíše - sáhl si na jeho rány"
+      },
+      {
+        "q": "Jan Křtitel",
+        "a": "pokřtil Ježíše v Jordánu, předvídal jeho budoucnost jako mesiáše"
+      },
+      {
+        "q": "Lazar",
+        "a": "Ježíš ho vzkřísil těsně před svou smrtí"
+      },
+      {
+        "q": "Marie Magdalena",
+        "a": "jako první spatřila Ježíše po zmrtvýchvstání"
+      },
+      {
+        "q": "Golgota",
+        "a": "místo ukřižování Ježíše"
+      },
+      {
+        "q": "Getsemanská zahrada",
+        "a": "Ježíš se zde modlil před svým zatčením"
+      },
+      {
+        "q": "Jidáš a 30 stříbrných",
+        "a": "zradil Ježíše za 30 stříbrných"
+      },
+      {
+        "q": "Herodes",
+        "a": "nařídil zabití všech chlapců mladších 2 let - cítil se být ohrožen Ježíšem"
+      },
+      {
+        "q": "Petr Šimon a kohout",
+        "a": "3x zapřel Ježíše než zakokrhal kohout"
+      },
+      {
+        "q": "Pilát Pontský a ruce",
+        "a": "nechal ukřižovat Ježíše namísto Barabáše, ale umyl si ruce na znamení, že za to nenese vinu"
+      }
+    ]
   }
 ]
