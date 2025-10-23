@@ -347,5 +347,110 @@
         "a": "nechal ukřižovat Ježíše namísto Barabáše, ale umyl si ruce na znamení, že za to nenese vinu"
       }
     ]
+  },
+  {
+    "name": "literatura",
+    "questions": [
+      {
+        "q": "Rosettská deska",
+        "a": "objevena za napoleonského tažení, psána hieroglyfy"
+      },
+      {
+        "q": "hymnus",
+        "a": "oslavná píseň, často věnována bohům"
+      },
+      {
+        "q": "knihy mrtvých",
+        "a": "často v hrobech, aby mrtví prošli zkouškami v podsvětí"
+      },
+      {
+        "q": "kusy keramiky, sloužící k zaznamenávání textu",
+        "a": "ostraka (j. č. ostrakum)"
+      },
+      {
+        "q": "píseň písní",
+        "a": "šalamounova píseň"
+      },
+      {
+        "q": "mravoučná literatura",
+        "a": "naučení Ptahhotepovo, naučení písaře Amenomepa"
+      },
+      {
+        "q": "povídka o Sinuhetovi",
+        "a": "napodobuje žánr životopisu, inspiroval se jí Mika Waltari ve své knize \"Egypťan Sinuhet\""
+      },
+      {
+        "q": "Nejstarší literální projevy spojené s náboženstvím",
+        "a": "magická průpověď, zaklínadla, zaříkávání"
+      },
+      {
+        "q": "mýtus",
+        "a": "často báje, snaží se dát pocit o hlubším pochopení světa"
+      },
+      {
+        "q": "jaký je rozdíl mezi piktogramy a ideogramy?",
+        "a": "piktogram je jednoduchý obrázek zachycující přesnou skutečnost, zatímco ideogram je více abstraktní, a musí být předem domluvený"
+      },
+      {
+        "q": "jaký byl vývoj písma od ideogramů",
+        "a": "klínové písmo, egyptské - hieroglyfy, hieratické (jednodušší), démotické (lidové); féničané - fonetické (znak pro každou hlásku) -> řekové -> Etruskové -> římané -> latinka; hlaholice -> cyrilice -> azbuka"
+      },
+      {
+        "q": "Aššurbanipalova knihovna",
+        "a": "požár - hliněné destičky se vypálily a zachovaly se"
+      },
+      {
+        "q": "epos (o Gilgamešovi)",
+        "a": "veršovaný, časté opakování, přívlastky u jmen (zopakování jejich role), bohové, hrdinové; epika"
+      },
+      {
+        "q": "Chammurapiho zákoník",
+        "a": "sbírka právních předpisů (17. stol. př. n. l.)"
+      },
+      {
+        "q": "Kanaán",
+        "a": "území dnešní Sýrie, Izraele, Palestiny, Libanonu; říše se rozpadá, avšak národ nezaniká díky literatuře a víře"
+      },
+      {
+        "q": "jakým jazykem je psán starý zákon?",
+        "a": "hebrejsky, část aramejsky"
+      },
+      {
+        "q": "jaké jsou typy textů ve starém zákoně?",
+        "a": "historické, prorocké, básnické"
+      },
+      {
+        "q": "Jak se jinak nazývá 5 knih Mojžíšových?",
+        "a": "tóra, pentateuch"
+      },
+      {
+        "q": "jaké knihy obsahuje tóra a o čem jsou?",
+        "a": "Genesis - počátky (stvoření světa - babylonská věž), Exodus - útisk Izraelitů v Egyptě a jejich útěk pod vedením Mojžíše, Leviticus - zákony, svátky, tradice; Numeri - sčítání lidu, jeruzalémský chrám, cesta na Mohapskou pláň; Deuteronomium - \"2. zákon\" zopakování pravidel, Mojžíšův poslední proslov a jeho smrt"
+      },
+      {
+        "q": "knihy proroků",
+        "a": "Izajáš, Jeremiáš, Jonáš"
+      },
+      {
+        "q": "spisy",
+        "a": "žalmy, přísloví, píseň písní, kniha Job, kniha Kazatel"
+      },
+      {
+        "q": "kolik je knih v novém zákoně a v jakém jazyce jsou psány",
+        "a": "27, řečtina"
+      },
+      {
+        "q": "Jaká jsou 4 evangelia",
+        "a": "Matouš - židé, Marek - pohané, Lukáš - detailní, rozsáhlé, Jan - nejodlišnější, plné symboliky"
+      },
+      {
+        "q": "podobenství",
+        "a": "vysvětlení pomocí obrazného pojmenování"
+      },
+      {
+        "q": "skutky apoštolů",
+        "a": "apoštol = učedník, zjevení Janovo - apokalypsa; apokryfní evangelia - nepřijata do nového zákona (tomášovo, jidášovo)"
+      }
+    ]
   }
 ]
