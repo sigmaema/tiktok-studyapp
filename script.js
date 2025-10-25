@@ -2,38 +2,115 @@ let sets = [];
 let userSets = [];
 let currentPracticeSession = null;
 let userProfile = null;
-let practiceMode = null; // 'typing' or 'flashcard'
+let practiceMode = null;
+import { supabaseUrl, supabaseKey } from './config.js'
 
+const { createClient } = supabase
+const supabaseClient = createClient(supabaseUrl, supabaseKey)
+
+
+function getUserId() {
+    let userId = localStorage.getItem('userId');
+    if (!userId) {
+        userId = 'user_' + Math.random().toString(36).substr(2, 9);
+        localStorage.setItem('userId', userId);
+    }
+    return userId;
+}
+
+const userId = getUserId();
 
 async function loadSets() {
-    try {
-        const res = await fetch("default.json");
-        sets = await res.json();
-    } catch (e) {
-        sets = [
-            {
-                name: "Základní matematika",
-                questions: [
-                    { q: "Kolik je 2 + 2?", a: "4" },
-                    { q: "Kolik je 5 * 3?", a: "15" },
-                    { q: "Kolik je 10 - 7?", a: "3" }
-                ]
-            }
-        ];
+    await loadUserSetsFromSupabase();
+    
+    const savedLocalSets = localStorage.getItem('userSets');
+    let localSets = [];
+    if (savedLocalSets) {
+        localSets = JSON.parse(savedLocalSets);
     }
-    const saved = localStorage.getItem('userSets');
-    if (saved) {
-        userSets = JSON.parse(saved);
-    }
-
+    
+    sets = [...userSets, ...localSets];
+    
     const savedProfile = localStorage.getItem('userProfile');
     if (savedProfile) {
         userProfile = JSON.parse(savedProfile);
     }
 }
 
-function saveUserSets() {
-    localStorage.setItem('userSets', JSON.stringify(userSets));
+async function loadUserSetsFromSupabase() {
+    try {
+        const { data: topics, error: topicsError } = await supabaseClient
+            .from('topics')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (topicsError) throw topicsError;
+
+        if (!topics || topics.length === 0) {
+            userSets = [];
+            return;
+        }
+
+        const { data: flashcards, error: flashcardsError } = await supabaseClient
+            .from('flashcards')
+            .select('*');
+
+        if (flashcardsError) throw flashcardsError;
+
+        const allSets = topics.map(topic => ({
+            id: topic.id,
+            name: topic.name,
+            questions: flashcards
+                .filter(fc => fc.topic_id === topic.id)
+                .map(fc => ({ q: fc.question, a: fc.answer, id: fc.id })),
+            fromSupabase: true
+        }));
+
+        const seen = new Set();
+        userSets = allSets.filter(set => {
+            if (seen.has(set.name)) {
+                return false;
+            }
+            seen.add(set.name);
+            return true;
+        });
+
+        console.log('Loaded shared sets from Supabase:', userSets);
+    } catch (error) {
+        console.error('Error loading user sets:', error);
+        userSets = [];
+    }
+}
+
+function saveUserSetLocally(set, setIndex = null) {
+    const savedLocalSets = localStorage.getItem('userSets');
+    let localSets = savedLocalSets ? JSON.parse(savedLocalSets) : [];
+    
+    if (setIndex !== null) {
+        localSets[setIndex] = {
+            ...set,
+            id: `local_${Date.now()}`,
+            fromLocal: true
+        };
+    } else {
+        localSets.push({
+            ...set,
+            id: `local_${Date.now()}`,
+            fromLocal: true
+        });
+    }
+    
+    localStorage.setItem('userSets', JSON.stringify(localSets));
+    return true;
+}
+
+function deleteUserSetLocally(setIndex) {
+    const savedLocalSets = localStorage.getItem('userSets');
+    let localSets = savedLocalSets ? JSON.parse(savedLocalSets) : [];
+    
+    localSets.splice(setIndex, 1);
+    localStorage.setItem('userSets', JSON.stringify(localSets));
+    return true;
 }
 
 function saveUserProfile() {
@@ -52,7 +129,7 @@ function setActiveTab(tabId) {
 function renderHome() {
     setActiveTab('tab-home');
     const content = document.getElementById("content");
-    const allSets = [...sets, ...userSets];
+    const allSets = sets;
 
     content.innerHTML = `
         <div class="flex flex-col items-center justify-center min-h-full p-4 pb-20">
@@ -65,19 +142,30 @@ function renderHome() {
             ` : ''}
             
             <h2 class="text-xl font-bold mb-6 text-center">Vyber set k procvičování</h2>
-            <select id="setSelect" class="border rounded-lg p-3 w-full max-w-md mb-4 bg-white text-base">
-                ${allSets.map((s, i) => `<option value="${i}">${s.name}</option>`).join("")}
-            </select>
-            <button id="startSet" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full max-w-md transition-colors">
-                Pokračovat
-            </button>
+            ${allSets.length === 0 ? `
+                <div class="text-gray-500 text-center py-8">
+                    <p class="mb-4">Zatím nemáš žádné sety</p>
+                    <button onclick="document.getElementById('tab-create').click()" class="bg-blue-500 text-white px-6 py-3 rounded-lg">
+                        Vytvoř první set
+                    </button>
+                </div>
+            ` : `
+                <select id="setSelect" class="border rounded-lg p-3 w-full max-w-md mb-4 bg-white text-base">
+                    ${allSets.map((s, i) => `<option value="${i}">${s.name}${s.fromSupabase ? ' 🌐' : ''}</option>`).join("")}
+                </select>
+                <button id="startSet" class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-lg w-full max-w-md transition-colors">
+                    Pokračovat
+                </button>
+            `}
         </div>
     `;
 
-    document.getElementById("startSet").addEventListener("click", () => {
-        const idx = parseInt(document.getElementById("setSelect").value);
-        renderModeSelection(allSets[idx]);
-    });
+    if (allSets.length > 0) {
+        document.getElementById("startSet").addEventListener("click", () => {
+            const idx = parseInt(document.getElementById("setSelect").value);
+            renderModeSelection(allSets[idx]);
+        });
+    }
 }
 
 function renderModeSelection(set) {
@@ -224,25 +312,30 @@ function renderCreate() {
         updateQuestionTabs();
     });
 
-    document.getElementById("saveSetBtn").addEventListener("click", () => {
+    document.getElementById("saveSetBtn").addEventListener("click", async () => {
         if (currentSet.questions.length === 0) {
             alert("Přidej alespoň jednu otázku!");
             return;
         }
-        if (isEditingSet) {
-            const setIndex = window.editingSetIndex;
-            userSets[setIndex] = currentSet;
-        } else {
-            userSets.push(currentSet);
+
+        const success = saveUserSetLocally(currentSet, isEditingSet ? window.editingSetIndex : null);
+        
+        if (success) {
+            alert(`Set "${currentSet.name}" byl uložen!`);
+            await loadSets();
+            renderHome();
         }
-        saveUserSets();
-        alert(`Set "${currentSet.name}" byl uložen!`);
-        renderHome();
     });
 
     if (window.editingSetIndex !== undefined) {
-        const setToEdit = userSets[window.editingSetIndex];
-        currentSet = JSON.parse(JSON.stringify(setToEdit));
+        const savedLocalSets = localStorage.getItem('userSets');
+        const localSets = savedLocalSets ? JSON.parse(savedLocalSets) : [];
+        const setToEdit = localSets[window.editingSetIndex];
+        
+        currentSet = {
+            name: setToEdit.name,
+            questions: JSON.parse(JSON.stringify(setToEdit.questions))
+        };
         isEditingSet = true;
 
         document.getElementById("setName").value = currentSet.name;
@@ -269,7 +362,10 @@ function renderAccount() {
         return;
     }
 
-    const profilePicture = userProfile.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTAtMTAtNC40NzctMTAtMTAgNC40NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTYgcTE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2LTE2LTcuMTYzLTE2LTE2eiIgZmlsbD0iIzZiNzI4MCIvPgo8L3N2Zz4K';
+    const profilePicture = userProfile.picture || 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC00NzcgMTAtMTAgMTAtMTAtNC00NzctMTAtMTAgNC00NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTYgcTE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2LTE2LTcuMTYzLTE2LTE2eiIgZmlsbD0iIzZiNzI4MCIvPgo8L3N2Zz4K';
+
+    const savedLocalSets = localStorage.getItem('userSets');
+    const localSets = savedLocalSets ? JSON.parse(savedLocalSets) : [];
 
     content.innerHTML = `
         <div class="p-4 min-h-full pb-20">
@@ -277,7 +373,7 @@ function renderAccount() {
                 <img src="${profilePicture}" 
                      alt="Profile" 
                      class="profile-picture mx-auto mb-4"
-                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC40NzcgMTAtMTAgMTAtMTAtNC40NzctMTAtMTAgNC40NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTYgcTE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2LTE2LTcuMTYzLTE2LTE2eiIgZmlsbD0iIzZiNzI4MCIvPgo8L3N2Zz4K'">
+                     onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGF0aCBkPSJNNDAgMjBjNS41MjMgMCAxMCA0LjQ3NyAxMCAxMHMtNC00NzcgMTAtMTAgMTAtMTAtNC00NzctMTAtMTAgNC00NzctMTAgMTAtMTB6bS04IDMwYzAtOC44MzcgNy4xNjMtMTYgMTYtMTYgcTE2IDcuMTYzIDE2IDE2LTcuMTYzIDE2LTE2IDE2LTE2LTcuMTYzLTE2LTE2eiIgZmlsbD0iIzZiNzI4MCIvPgo8L3N2Zz4K'">
                 <h2 class="text-xl font-bold">${userProfile.name || 'Uživatel'}</h2>
                 <button id="editProfileBtn" class="text-blue-500 text-sm mt-2 hover:text-blue-600 transition-colors touch-manipulation">
                     Upravit profil
@@ -286,9 +382,9 @@ function renderAccount() {
             
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold">Tvoje sety:</h3>
-                ${userSets.length === 0 ?
+                ${localSets.length === 0 ?
             '<div class="text-gray-500 text-center py-8 bg-white rounded-lg border">Zatím nemáš žádné sety</div>' :
-            userSets.map((set, i) => `
+            localSets.map((set, i) => `
                         <div class="bg-white p-4 rounded-lg border shadow-sm">
                             <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                                 <div class="flex-1">
@@ -332,7 +428,7 @@ function renderAccount() {
                 e.stopPropagation();
                 try {
                     const index = parseInt(e.target.dataset.index);
-                    if (index >= 0 && index < userSets.length) {
+                    if (index >= 0 && index < localSets.length) {
                         editUserSet(index);
                     }
                 } catch (error) {
@@ -344,16 +440,18 @@ function renderAccount() {
 
         const deleteButtons = content.querySelectorAll('.delete-set');
         deleteButtons.forEach(btn => {
-            btn.addEventListener('click', (e) => {
+            btn.addEventListener('click', async (e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 try {
                     const index = parseInt(e.target.dataset.index);
-                    if (index >= 0 && index < userSets.length) {
+                    if (index >= 0 && index < localSets.length) {
                         if (confirm('Opravdu chceš smazat tento set?')) {
-                            userSets.splice(index, 1);
-                            saveUserSets();
-                            renderAccount();
+                            const success = deleteUserSetLocally(index);
+                            if (success) {
+                                await loadSets();
+                                renderAccount();
+                            }
                         }
                     }
                 } catch (error) {
@@ -434,6 +532,7 @@ function renderProfileSetup() {
                 const url = e.target.value.trim();
                 if (url) {
                     profilePreview.src = url;
+                    profilePreview.style.display = 'block';
                 } else {
                     profilePreview.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iNDAiIGN5PSI0MCIgcj0iNDAiIGZpbGw9IiNlNWU3ZWIiLz4KPGNpcmNsZSBjeD0iNDAiIGN5PSIzMCIgcj0iOCIgZmlsbD0iIzZiNzI4MCIvPjxwYXRoIGQ9Ik0yNiA1NGMwLTcuNzMyIDYuMjY4LTE0IDE0LTE0czE0IDYuMjY4IDE0IDE0djJIMjZ2LTJ6IiBmaWxsPSIjNmI3MjgwIi8+PC9zdmc+';
                 }

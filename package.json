@@ -1,0 +1,24 @@
+{
+  "name": "zeroattentionspan",
+  "version": "1.0.0",
+  "description": "http://nevim.wuaze.com (http sorry)",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sigmaema/tiktok-studyapp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sigmaema/tiktok-studyapp/issues"
+  },
+  "homepage": "https://github.com/sigmaema/tiktok-studyapp#readme",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.76.1",
+    "dotenv": "^17.2.3"
+  }
+}
